@@ -1,5 +1,3 @@
-#!/usr/bin/env python
-
 """
 Version information for the application.
 """

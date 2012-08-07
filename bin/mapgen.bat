@@ -1,4 +1,4 @@
 @echo off
 
 set PYTHONPATH=.
-python mapgen/application.py
+python mapgen/application.py %*
