@@ -5,6 +5,7 @@ Main entry point of the application.
 import pyglet
 import sys
 
+from mapgen.gamewindow import GameWindow
 from mapgen.version import VERSION
 
 
@@ -15,14 +16,8 @@ def print_version():
 
 def run_app():
     """Start the main application."""
-    window = pyglet.window.Window()
+    window = GameWindow()
     window.set_caption('mapgen #%s' % VERSION)
-
-    pyglet.gl.glClearColor(1.0, 0.0, 1.0, 1.0)
-
-    @window.event
-    def on_draw():
-        window.clear()
 
     pyglet.app.run()
 
