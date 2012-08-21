@@ -1,7 +1,6 @@
 import pyglet
-import random
 
-from mapgen.map import Map
+from mapgen.newmap import NewMap
 
 
 class GameWindow(pyglet.window.Window):
@@ -16,8 +15,8 @@ class GameWindow(pyglet.window.Window):
         pyglet.gl.glDisable(pyglet.gl.GL_DEPTH_TEST)
 
         self.fps_label = pyglet.clock.ClockDisplay(color=(1.0, 0.0, 0.0, 0.5))
-        
-        self.map = Map()
+
+        self.map = NewMap()
 
     def on_draw(self):
         self.clear()
@@ -39,4 +38,4 @@ class GameWindow(pyglet.window.Window):
             self.progress()
 
     def progress(self):
-        self.map = Map()
+        self.map = NewMap()
