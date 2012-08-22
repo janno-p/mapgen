@@ -1,6 +1,7 @@
 from pyglet import gl, graphics
 from random import randint, random
 from voronoi import diagram_ext
+from site import Site
 
 import math
 
@@ -27,7 +28,6 @@ class NewMap(object):
                 dx = int(math.cos(a) * r)
                 dy = int(math.sin(a) * r)
 
-
                 extra = 0 if y % 2 == 0 else h_extra
                 point = (h_offset + extra + x * h_space + dx, v_offset + y * v_space + dy)
                 points.append(point)
@@ -46,7 +46,7 @@ class NewMap(object):
         self.gl_lines = reduce(lambda s, c: s + c[0] + c[1], vor_diagram, tuple())
         self.gl_lines = [int(i) for i in self.gl_lines]
 
-        self.process_diagram(vor_diagram)
+        self.process_diagram(vor_diagram, points)
 
     def draw_frame(self):
         gl.glColor3f(1.0, 0.0, 0.0)
@@ -62,30 +62,47 @@ class NewMap(object):
         gl.glLineWidth(1)
         graphics.draw(len(self.gl_lines) // 2, gl.GL_LINES, ('v2i', self.gl_lines))
 
-        gl.glColor3f(0.0, 0.0, 0.0)
-        gl.glPointSize(2)
-        graphics.draw(len(self.gl_vertices) // 2, gl.GL_POINTS, ('v2i', self.gl_vertices))
+        #gl.glColor3f(0.0, 0.0, 0.0)
+        #gl.glPointSize(2)
+        #graphics.draw(len(self.gl_vertices) // 2, gl.GL_POINTS, ('v2i', self.gl_vertices))
 
         self.draw_frame()
 
-    def process_diagram(self, vor_diagram):
-        vertices = []
-        edges = []
-        for e in vor_diagram:
-            e = tuple(tuple(int(x) for x in y) for y in e)
-            if e[0] == e[1]:
+    def process_diagram(self, vor_diagram, points):
+        polygons = [None] * len(points)
+        for vor_edge in vor_diagram:
+            vertex1 = tuple(int(x) for x in vor_edge[0])
+            vertex2 = tuple(int(x) for x in vor_edge[1])
+            if vertex1 == vertex2:
                 continue
-            edge = []
-            for p in e:
-                if p in vertices:
-                    edge.append(vertices.index(p))
-                else:
-                    edge.append(len(vertices))
-                    vertices.append(p)
-            edges.append(edge)
-        self.gl_vertices = reduce(lambda x, y: x + y, vertices, tuple())
+            for index in vor_edge[2]:
+                if polygons[index] is None:
+                    polygons[index] = []
+                polygons[index].append((vertex1, vertex2))
 
-        self.build_polygons(vertices, edges)
+        self.sites = []
+        for i, p in enumerate(polygons):
+            self.sites.append(Site(points[i], p))
 
-    def build_polygons(self, vertices, edges):
-        pass
+
+
+        #vertices = []
+        #edges = []
+        #for e in vor_diagram:
+        #    e = tuple(tuple(int(x) for x in y) for y in e)
+        #    if e[0] == e[1]:
+        #        continue
+        #    edge = []
+        #    for p in e:
+        #        if p in vertices:
+        #            edge.append(vertices.index(p))
+        #        else:
+        #            edge.append(len(vertices))
+        #            vertices.append(p)
+        #    edges.append(edge)
+        #self.gl_vertices = reduce(lambda x, y: x + y, vertices, tuple())
+
+        #self.build_polygons(vertices, edges)
+
+    #def build_polygons(self, vertices, edges):
+        #pass
