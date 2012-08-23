@@ -54,6 +54,8 @@ class NewMap(object):
         graphics.draw(4, gl.GL_LINE_LOOP, ('v2i', (80, 60, 240, 60, 240, 180, 80, 180)))
 
     def draw(self):
+        self.site.draw()
+
         gl.glColor3f(0.0, 1.0, 1.0)
         gl.glPointSize(1)
         graphics.draw(len(self.gl_points) // 2, gl.GL_POINTS, ('v2i', self.gl_points))
@@ -80,9 +82,11 @@ class NewMap(object):
                     polygons[index] = []
                 polygons[index].append((vertex1, vertex2))
 
-        self.sites = []
-        for i, p in enumerate(polygons):
-            self.sites.append(Site(points[i], p))
+        self.site = Site(0, polygons[0])
+
+        #self.sites = []
+        #for i, p in enumerate(polygons):
+        #    self.sites.append(Site(points[i], p))
 
 
 
