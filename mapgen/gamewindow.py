@@ -1,6 +1,5 @@
 import pyglet
 
-from mapgen.newmap import NewMap
 from mapgen.spheremap import SphereMap
 
 
@@ -17,14 +16,11 @@ class GameWindow(pyglet.window.Window):
 
         self.fps_label = pyglet.clock.ClockDisplay(color=(1.0, 0.0, 0.0, 0.5))
 
-        #self.map = NewMap()
-        self.map = SphereMap(100)
+        self.initialize_map()
 
     def on_draw(self):
         self.clear()
-
         self.map.draw()
-
         self.fps_label.draw()
 
     def on_resize(self, width, height):
@@ -38,6 +34,11 @@ class GameWindow(pyglet.window.Window):
         super(GameWindow, self).on_key_press(symbol, modifiers)
         if symbol == pyglet.window.key.A:
             self.progress()
+        if symbol == pyglet.window.key.R:
+            self.map.toggle_view()
 
     def progress(self):
-        self.map = NewMap()
+        self.initialize_map()
+
+    def initialize_map(self):
+        self.map = SphereMap(38)
