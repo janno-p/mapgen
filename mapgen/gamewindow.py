@@ -1,6 +1,7 @@
 import pyglet
 
 from mapgen.newmap import NewMap
+from mapgen.spheremap import SphereMap
 
 
 class GameWindow(pyglet.window.Window):
@@ -16,7 +17,8 @@ class GameWindow(pyglet.window.Window):
 
         self.fps_label = pyglet.clock.ClockDisplay(color=(1.0, 0.0, 0.0, 0.5))
 
-        self.map = NewMap()
+        #self.map = NewMap()
+        self.map = SphereMap(100)
 
     def on_draw(self):
         self.clear()
@@ -29,7 +31,7 @@ class GameWindow(pyglet.window.Window):
         pyglet.gl.glViewport(0, 0, width, height)
         pyglet.gl.glMatrixMode(pyglet.gl.GL_PROJECTION)
         pyglet.gl.glLoadIdentity()
-        pyglet.gl.glOrtho(0.0, 320.0, 0.0, 240.0, -1.0, 1.0)
+        pyglet.gl.glOrtho(0.0, 320.0, 0.0, 240.0, -120.0, 120.0)
         pyglet.gl.glMatrixMode(pyglet.gl.GL_MODELVIEW)
 
     def on_key_press(self, symbol, modifiers):
