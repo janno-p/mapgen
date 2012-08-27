@@ -5,10 +5,25 @@ class Site(object):
         self.point = point
         self.edge = Site._create_chain(edges)
         self.gl_points = reduce(lambda x, y: x + y, self.edge, tuple())
+        self._update_bounding_rectangle()
 
     def draw(self):
         gl.glColor3f(1.0, 1.0, 1.0)
         graphics.draw(len(self.gl_points) // 2, gl.GL_POLYGON, ('v2i', self.gl_points))
+
+    def _update_bounding_rectangle(self):
+        xmin, xmax = [self.edge[0][0]] * 2
+        ymin, ymax = [self.edge[0][1]] * 2
+        for v in self.edge:
+            if v[0] < xmin:
+                xmin = v[0]
+            if v[0] > xmax:
+                xmax = v[0]
+            if v[1] < ymin:
+                ymin = v[1]
+            if v[1] > ymax:
+                ymax = v[1]
+        self.bound_rect = (xmin, ymin, xmax, ymax)
 
     @staticmethod
     def _create_chain(edges):

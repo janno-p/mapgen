@@ -7,6 +7,7 @@ import math
 
 class NewMap(object):
     DIM = (16, 13)
+    FRAME = (80, 60, 240, 180)
 
     def __init__(self):
         h_space = 160 // NewMap.DIM[0]
@@ -54,7 +55,8 @@ class NewMap(object):
         graphics.draw(4, gl.GL_LINE_LOOP, ('v2i', (80, 60, 240, 60, 240, 180, 80, 180)))
 
     def draw(self):
-        self.site.draw()
+        for site in self.sites:
+            site.draw()
 
         gl.glColor3f(0.0, 1.0, 1.0)
         gl.glPointSize(1)
@@ -71,10 +73,11 @@ class NewMap(object):
         self.draw_frame()
 
     def process_diagram(self, vor_diagram, points):
+        vertices = []
         polygons = [None] * len(points)
         for vor_edge in vor_diagram:
-            vertex1 = tuple(int(x) for x in vor_edge[0])
-            vertex2 = tuple(int(x) for x in vor_edge[1])
+            vertex1 = NewMap._find_vertex(vertices, vor_edge[0])
+            vertex2 = NewMap._find_vertex(vertices, vor_edge[1])
             if vertex1 == vertex2:
                 continue
             for index in vor_edge[2]:
@@ -82,31 +85,24 @@ class NewMap(object):
                     polygons[index] = []
                 polygons[index].append((vertex1, vertex2))
 
-        self.site = Site(0, polygons[0])
+        self.sites = []
+        for i, p in enumerate(polygons):
+            site = Site(points[i], p)
+            if NewMap._intersects(NewMap.FRAME, site.bound_rect):
+                if not site.bound_rect[2] > NewMap.FRAME[2]:
+                    self.sites.append(site)
 
-        #self.sites = []
-        #for i, p in enumerate(polygons):
-        #    self.sites.append(Site(points[i], p))
+    @staticmethod
+    def _intersects(rect1, rect2):
+        return rect1[0] < rect2[2] and rect1[2] > rect2[0] and rect1[1] < rect2[3] and rect1[3] > rect2[1]
 
-
-
-        #vertices = []
-        #edges = []
-        #for e in vor_diagram:
-        #    e = tuple(tuple(int(x) for x in y) for y in e)
-        #    if e[0] == e[1]:
-        #        continue
-        #    edge = []
-        #    for p in e:
-        #        if p in vertices:
-        #            edge.append(vertices.index(p))
-        #        else:
-        #            edge.append(len(vertices))
-        #            vertices.append(p)
-        #    edges.append(edge)
-        #self.gl_vertices = reduce(lambda x, y: x + y, vertices, tuple())
-
-        #self.build_polygons(vertices, edges)
-
-    #def build_polygons(self, vertices, edges):
-        #pass
+    @staticmethod
+    def _find_vertex(vertices, vertex):
+        EPSILON = 0.001
+        for v in vertices:
+            if round(v[0]) == round(vertex[0]) and round(v[1]) == round(vertex[1]):
+                return tuple(int(round(i)) for i in v)
+            if math.fabs(v[0] - vertex[0]) < EPSILON and math.fabs(v[1] - vertex[1]) < EPSILON:
+                return tuple(int(round(i)) for i in v)
+        vertices.append(vertex)
+        return tuple(int(round(i)) for i in vertex)
