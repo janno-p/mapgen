@@ -1,6 +1,7 @@
 import pyglet
 
 from mapgen.spheremap import SphereMap
+from mapgen.globe import Globe
 
 
 class GameWindow(pyglet.window.Window):
@@ -17,10 +18,12 @@ class GameWindow(pyglet.window.Window):
         self.fps_label = pyglet.clock.ClockDisplay(color=(1.0, 0.0, 0.0, 0.5))
 
         self.initialize_map()
+        self.globe = Globe(100, (10, 10))
 
     def on_draw(self):
         self.clear()
         self.map.draw()
+        self.globe.draw()
         self.fps_label.draw()
 
     def on_resize(self, width, height):
